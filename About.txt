@@ -7,11 +7,11 @@ To Install manually:
 Type out these commands into a terminal--
 
 brew install dialog
-sudo cp Nemo.sh /bin/
-sudo chown root:root /bin/Nemo
-sudo chmod +x /bin/Nemo
+sudo cp nemo.sh /bin/
+sudo chown root:root /bin/nemo
+sudo chmod +x /bin/nemo
 
 To Uninstall manually:
 Type out these commands into a terminal--
 
-sudo rm /bin/Nemo
+sudo rm /bin/nemo
