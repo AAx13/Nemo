@@ -20,7 +20,7 @@
 
 pre()
 {
-accss="" util="Utility" media="Multimedia" vid="Video"
+accss="Accessories" util="Utility" media="Multimedia" vid="Video"
 audio="Audio" dev="Development" gme="Game" net="Network"
 int="Internet" graph="Graphics" offce="Office" sys="System"
 settngs="Settings" wine="Wine" pth="/tmp/sysMENU"
@@ -42,9 +42,9 @@ ls /usr/share/applications/ >> "${pth}"/menu.list ;
 
 header='#!/bin/bash
 INPUT=/tmp/menu.txt
-dialog --clear --backtitle "Shellmen" \
+dialog --clear --backtitle "Nemo 0.1" \
 --title "[ S U B - M E N U ]" \
---menu "Please Select An Option" 25 100 25 \
+--menu "Please Select An Option" 100 200 100 \
 Main_Menu "Goes To Main Menu" \'
     echo "$header" > "${pth}"/${accss}.sh
     echo "$header" > "${pth}"/${dev}.sh
@@ -102,7 +102,7 @@ done
     echo "2>"\"'${INPUT}'"\"" | tee -a "${pth}"/*.sh
     echo 'menuitem=$(<"${INPUT}")' | tee -a "${pth}"/*.sh
     echo "case \$menuitem in" | tee -a "${pth}"/*.sh
-    echo "Main_Menu) exec shellMen ;;" | tee -a "${pth}"/*.sh
+    echo "Main_Menu) exec nemo ;;" | tee -a "${pth}"/*.sh
 
     commandInsert;
 }
@@ -119,7 +119,7 @@ i="1"
     execMethod=$(echo ${execMethod} | sed s/Exec=//g | sed s/%f//g | sed s/Try//g)
     catagory=$(grep -A 0 "Categories=" /usr/share/applications/"$line1")
     preComment=$(grep -A 0 "Comment=" /usr/share/applications/"$line1")
-    execCMD=$(echo "${filename}) ${execMethod} & shellMen ;;")
+    execCMD=$(echo "${filename}) ${execMethod} & nemo ;;")
     if [[ "$catagory" == *"$accss"* ]] || [[ "$catagory" == *"$util"* ]]; then
              echo "$execCMD" >> "${pth}"/${accss}.sh
 	   elif [[ "$catagory" == *"$dev"* ]]; then
@@ -153,9 +153,9 @@ done
 mainMENU()
 {
 INPUT=/tmp/menu.txt
-    dialog --clear --backtitle "Shellmen" \
+    dialog --clear --backtitle "Nemo" \
     --title "[ M A I N - M E N U ]" \
-    --menu "Please Select An Option" 25 100 25 \
+    --menu "Please Select An Option" 100 200 100 \
     Accessories "General Programs" \
     System "Main System Programs" \
     Settings "Main System Settings" \

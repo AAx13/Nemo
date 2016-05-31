@@ -1,9 +1,12 @@
+This program only currently works for OSx
+
 To install automatically please run the install.sh file
 You will need to make it exacutable.
 
 To Install manually:
 Type out these commands into a terminal--
 
+brew install dialog
 sudo cp Nemo.sh /bin/
 sudo chown root:root /bin/Nemo
 sudo chmod +x /bin/Nemo
