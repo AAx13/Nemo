@@ -1,0 +1,14 @@
+To install automatically please run the install.sh file
+You will need to make it exacutable.
+
+To Install manually:
+Type out these commands into a terminal--
+
+sudo cp Nemo.sh /bin/
+sudo chown root:root /bin/Nemo
+sudo chmod +x /bin/Nemo
+
+To Uninstall manually:
+Type out these commands into a terminal--
+
+sudo rm /bin/Nemo

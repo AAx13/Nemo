@@ -1,0 +1,184 @@
+#!/bin/bash
+#
+# By Maxim F. Stewart
+# Contact: [maxim2131@gmail.com] OR [gamer1119@gmail.com]
+#
+# Copyright 2013 Maxim F. Stewart
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#---------------------------------------------------------------------------------------#
+
+pre()
+{
+accss="" util="Utility" media="Multimedia" vid="Video"
+audio="Audio" dev="Development" gme="Game" net="Network"
+int="Internet" graph="Graphics" offce="Office" sys="System"
+settngs="Settings" wine="Wine" pth="/tmp/sysMENU"
+
+    if [ -d "${pth}"/ ]; then
+         mainMENU;
+    else
+         startScan;
+    fi
+}
+
+startScan()
+{
+clear
+mkdir "${pth}"
+touch "${pth}"/menu.list ;
+sed -i "d" "${pth}"/menu.list ;
+ls /usr/share/applications/ >> "${pth}"/menu.list ;
+
+header='#!/bin/bash
+INPUT=/tmp/menu.txt
+dialog --clear --backtitle "Shellmen" \
+--title "[ S U B - M E N U ]" \
+--menu "Please Select An Option" 25 100 25 \
+Main_Menu "Goes To Main Menu" \'
+    echo "$header" > "${pth}"/${accss}.sh
+    echo "$header" > "${pth}"/${dev}.sh
+    echo "$header" > "${pth}"/${gme}.sh
+    echo "$header" > "${pth}"/${int}.sh
+    echo "$header" > "${pth}"/${graph}.sh
+    echo "$header" > "${pth}"/${offce}.sh
+    echo "$header" > "${pth}"/${media}.sh
+    echo "$header" > "${pth}"/${sys}.sh
+    echo "$header" > "${pth}"/${settngs}.sh
+    echo "$header" > "${pth}"/${wine}.sh
+menuHeaderInsert;
+}
+
+menuHeaderInsert()
+{
+x=$(cat "${pth}"/menu.list | wc -l) >> /dev/null ;
+i="1"
+
+    while [ $i -le $x ]; do
+    # Reads the number of lines in list.txt then sets as a variable counting up to variable x
+    line1=$(sed -n "${i}p" "${pth}"/menu.list);
+    filename="${line1%.*}"
+    execMethod=$(grep -A 0 "Exec=" /usr/share/applications/"$line1")
+    catagory=$(grep -A 0 "Categories=" /usr/share/applications/"$line1")
+    preComment=$(grep -A 0 "Comment=" /usr/share/applications/"$line1")
+    comment=$(sed s/"Comment="//g <<< ${preComment})
+    inputer=$(echo ""\"$filename"\" "\"$comment"\" \\")
+    if [[ "$catagory" == *"$accss"* ]] || [[ "$catagory" == *"$util"* ]]; then
+	          echo "$inputer" >> "${pth}"/${accss}.sh
+	   elif [[ "$catagory" == *"$dev"* ]]; then
+		           echo "$inputer" >> "${pth}"/${dev}.sh
+	   elif [[ "$catagory" == *"$gme"* ]]; then
+		           echo "$inputer" >> "${pth}"/${gme}.sh
+	   elif [[ "$catagory" == *"$int"* ]] || [[ "$catagory" == *"$net"* ]] ; then
+		           echo "$inputer" >> "${pth}"/${int}.sh
+	   elif [[ "$catagory" == *"$graph"* ]]; then
+		           echo "$inputer" >> "${pth}"/${graph}.sh
+	   elif [[ "$catagory" == *"$offce"* ]]; then
+		           echo "$inputer" >> "${pth}"/${offce}.sh
+	   elif [[ "$catagory" == *"$media*" ]] \
+		    || [[ "$catagory" == *"$vid"* ]] \
+		    || [[ "$catagory" == *"$audio"* ]]; then
+			          echo "$inputer" >> "${pth}"/${media}.sh
+	   elif [[ "$catagory" == *"$sys"* ]]; then
+		           echo "$inputer" >> "${pth}"/${sys}.sh
+    elif [[ "$catagory" == *"$settngs"* ]]; then
+		           echo "$inputer" >> "${pth}"/${settngs}.sh
+	   elif [[ "$catagory" == *"$wine"* ]]; then
+		           echo "$inputer" >> "${pth}"/${wine}.sh
+    fi
+    i=$[$i++1];
+done
+
+    echo "2>"\"'${INPUT}'"\"" | tee -a "${pth}"/*.sh
+    echo 'menuitem=$(<"${INPUT}")' | tee -a "${pth}"/*.sh
+    echo "case \$menuitem in" | tee -a "${pth}"/*.sh
+    echo "Main_Menu) exec shellMen ;;" | tee -a "${pth}"/*.sh
+
+    commandInsert;
+}
+
+commandInsert()
+{
+x=$(cat "${pth}"/menu.list | wc -l) >> /dev/null ;
+i="1"
+
+    while [ $i -le $x ]; do
+    line1=$(sed -n "${i}p" "${pth}"/menu.list);
+    filename="${line1%.*}"
+    execMethod=$(grep -A 0 -m2 "Exec=" /usr/share/applications/"$line1" | tail -n1)
+    execMethod=$(echo ${execMethod} | sed s/Exec=//g | sed s/%f//g | sed s/Try//g)
+    catagory=$(grep -A 0 "Categories=" /usr/share/applications/"$line1")
+    preComment=$(grep -A 0 "Comment=" /usr/share/applications/"$line1")
+    execCMD=$(echo "${filename}) ${execMethod} & shellMen ;;")
+    if [[ "$catagory" == *"$accss"* ]] || [[ "$catagory" == *"$util"* ]]; then
+             echo "$execCMD" >> "${pth}"/${accss}.sh
+	   elif [[ "$catagory" == *"$dev"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${dev}.sh
+	   elif [[ "$catagory" == *"$gme"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${gme}.sh
+	   elif [[ "$catagory" == *"$int"* ]] || [[ "$catagory" == *"$net"* ]] ; then
+		           echo "$execCMD" >> "${pth}"/${int}.sh
+	   elif [[ "$catagory" == *"$graph"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${graph}.sh
+	   elif [[ "$catagory" == *"$offce"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${offce}.sh
+	   elif [[ "$catagory" == *"$media*" ]] \
+		    || [[ "$catagory" == *"$vid"* ]] \
+		    || [[ "$catagory" == *"$audio"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${media}.sh
+	   elif [[ "$catagory" == *"$sys"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${sys}.sh
+	   elif [[ "$catagory" == *"$settngs"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${settngs}.sh
+    elif [[ "$catagory" == *"$wine"* ]]; then
+		           echo "$execCMD" >> "${pth}"/${wine}.sh
+    fi
+    i=$[$i++1];
+done
+    echo "esac" | tee -a "${pth}"/*.sh
+    chmod +x "${pth}"/*.sh
+    mainMENU;
+}
+
+mainMENU()
+{
+INPUT=/tmp/menu.txt
+    dialog --clear --backtitle "Shellmen" \
+    --title "[ M A I N - M E N U ]" \
+    --menu "Please Select An Option" 25 100 25 \
+    Accessories "General Programs" \
+    System "Main System Programs" \
+    Settings "Main System Settings" \
+    Multimedia "Audio & Video Programs" \
+    Graphics "Image Programs" \
+    Games "Gaming Programs" \
+    Office "Wordprocess & Documents Programs" \
+    Development "Programing Programs" \
+    Internet "Various Internet Related Programs" \
+    Wine "Windows Exe & Program Support" 2>"${INPUT}"
+    menuitem=$(<"${INPUT}")
+    case $menuitem in
+	    Accessories) bash "${pth}"/Accessories.sh ;;
+	    System) bash "${pth}"/System.sh ;;
+	    Settings) bash "${pth}"/Settings.sh ;;
+	    Multimedia) bash "${pth}"/Multimedia.sh ;;
+	    Graphics) bash "${pth}"/Graphics.sh ;;
+	    Games) bash "${pth}"/Game.sh ;;
+	    Office) bash "${pth}"/Office.sh ;;
+	    Development) bash "${pth}"/Development.sh ;;
+	    Internet) bash "${pth}"/Internet.sh ;;
+	    Wine) bash "${pth}"/Wine.sh ;;
+	    Exit) echo "Bye!"; break ;;
+    esac
+}
+pre;
